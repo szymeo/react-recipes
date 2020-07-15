@@ -1,0 +1,1 @@
+export const switchCase = a => b => a[b] || a.default;
