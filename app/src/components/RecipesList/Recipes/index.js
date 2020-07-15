@@ -33,6 +33,7 @@ export default ({ recipes }) => {
 
     const newRecipe = () => {
         setModalOperationType(ModalOperationTypes.CREATE);
+        setFormState(initialFormState);
         setIsOpen(true);
     };
 
