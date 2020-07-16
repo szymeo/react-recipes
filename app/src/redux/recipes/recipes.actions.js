@@ -2,6 +2,7 @@ import keyMirror from 'key-mirror';
 import { v4 as uuidv4 } from 'uuid';
 
 import { LocalStorageKeys } from '../../constants/LocalStorageKeys';
+import { getFromLocalStorage, updateInLocalStorage } from '../../utils/localstorage';
 
 export const RecipesActions = keyMirror({
     GET_RECIPES: null,
@@ -9,10 +10,6 @@ export const RecipesActions = keyMirror({
     CREATE_RECIPE: null,
     DELETE_RECIPE: null,
 });
-
-export const getFromLocalStorage = (key, defaultValue) => JSON.parse(localStorage.getItem(key)) || defaultValue;
-
-export const updateInLocalStorage = (key, value) => localStorage.setItem(key, value);
 
 export const getRecipes = () => {
     return (dispatch) => {

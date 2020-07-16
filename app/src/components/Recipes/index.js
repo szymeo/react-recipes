@@ -1,16 +1,15 @@
-import React, { Fragment, useCallback, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import Collapsible from 'react-collapsible';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import Input from '../../../components/Input';
-import Modal from '../../../components/Modal';
-import TextArea from '../../../components/TextArea';
-import { ModalOperationTypes } from '../../../constants/ModalOperationTypes';
-import Button from '../../../elements/Button';
-import { createRecipe, deleteRecipe, updateRecipe } from '../../../redux';
-import { ucFirst } from '../../../utils/string';
-import { switchCase } from '../../../utils/switchcase';
-import Recipe from '../Recipe';
+import Input from '../Input';
+import Modal from '../Modal';
+import TextArea from '../TextArea';
+import { ModalOperationTypes } from '../../constants/ModalOperationTypes';
+import Button from '../../elements/Button';
+import { createRecipe, deleteRecipe, updateRecipe } from '../../redux';
+import { ucFirst } from '../../utils/string';
+import Recipe from './Recipe';
 
 const ModalInputWrap = styled.div`
     margin: 12px 0;
@@ -21,20 +20,30 @@ export default ({ recipes }) => {
     const inputRef = useRef();
     const textAreaRef = useRef();
     const dispatch = useDispatch();
-    const [isOpen, setIsOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [modalOperationType, setModalOperationType] = useState(false);
     const [formState, setFormState] = useState(initialFormState);
 
-    const editRecipe = (recipe) => {
+    const startRecipeEdit = (recipe) => {
         setModalOperationType(ModalOperationTypes.EDIT);
         setFormState(recipe);
-        setIsOpen(true);
+        setModalOpen(true);
     };
 
-    const newRecipe = () => {
+    const finishRecipeEdit = () => {
+        dispatch(updateRecipe(formState));
+        closeAndResetModalState();
+    };
+
+    const startRecipeCreation = () => {
         setModalOperationType(ModalOperationTypes.CREATE);
         setFormState(initialFormState);
-        setIsOpen(true);
+        setModalOpen(true);
+    };
+
+    const finishRecipeCreation = () => {
+        dispatch(createRecipe(formState));
+        closeAndResetModalState();
     };
 
     const handleInputChange = inputRef => (e) => {
@@ -46,24 +55,10 @@ export default ({ recipes }) => {
         });
     };
 
-    const proceedModalOperation = (type) => {
-        switchCase({
-            [ModalOperationTypes.CREATE]: () => {
-                dispatch(createRecipe(formState));
-                setFormState(initialFormState);
-                setIsOpen(false);
-            },
-            [ModalOperationTypes.EDIT]: () => {
-                dispatch(updateRecipe(formState));
-                setFormState(initialFormState);
-                setIsOpen(false);
-            },
-        })(type)();
+    const closeAndResetModalState = () => {
+        setFormState(initialFormState);
+        setModalOpen(false);
     };
-
-    const handleModalClose = useCallback(() => {
-        setIsOpen(false);
-    }, []);
 
     return (
         <Fragment>
@@ -76,14 +71,14 @@ export default ({ recipes }) => {
                     <Recipe
                         key={i}
                         recipe={recipe}
-                        onEdit={() => editRecipe(recipe)}
+                        onEdit={() => startRecipeEdit(recipe)}
                         onDelete={() => dispatch(deleteRecipe(recipe.id))} />
                 </Collapsible>
             ))}
 
-            <Button onClick={() => newRecipe()}>New recipe+</Button>
+            <Button onClick={() => startRecipeCreation()}>New recipe+</Button>
 
-            <Modal show={isOpen} handleClose={handleModalClose}>
+            <Modal show={modalOpen} handleClose={closeAndResetModalState}>
                 <h1>{ucFirst(modalOperationType)} a recipe</h1>
 
                 <hr />
@@ -108,8 +103,11 @@ export default ({ recipes }) => {
                     />
                 </ModalInputWrap>
 
-                <Button onClick={() => proceedModalOperation(modalOperationType)}>Save recipe</Button>
-                <Button style={{ marginLeft: '8px' }} onClick={handleModalClose}>Cancel</Button>
+                {modalOperationType === ModalOperationTypes.CREATE ?
+                    <Button onClick={finishRecipeCreation}>Create recipe</Button> :
+                    <Button onClick={finishRecipeEdit}>Update recipe</Button>
+                }
+                <Button style={{ marginLeft: '8px' }} onClick={closeAndResetModalState}>Cancel</Button>
             </Modal>
         </Fragment>
     );

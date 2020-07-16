@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Modal } from './layout.js';
+import Modal from './layout.js';
 
 export default ({ handleClose, show, children }) => {
     const noop = e => e.stopPropagation();

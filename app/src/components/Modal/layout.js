@@ -36,9 +36,7 @@ const ModalCloseButton = styled.button`
 Modal.Content = ModalContent;
 Modal.CloseButton = ModalCloseButton;
 
-export {
-    Modal
-};
+export default Modal;
 
 // .modal {
 //     position: fixed;

@@ -4,7 +4,6 @@ import Recipe from './layout';
 import Button from '../../../elements/Button';
 
 export default ({ recipe, onEdit, onDelete }) => {
-
     return (
         <Recipe>
             <hr style={{ margin: 0 }} />

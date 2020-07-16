@@ -1,14 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-
-import RecipesList from '../../components/RecipesList';
+import Recipes from '../../components/Recipes';
 import { getRecipes } from '../../redux';
-
-const RecipesWrapper = styled.div`
-    width: 420px;
-    margin: 100px auto auto;
-`;
+import App from './layout';
 
 export default () => {
     const recipes = useSelector(state => state.recipes);
@@ -19,8 +13,8 @@ export default () => {
     }, [dispatch]);
 
     return (
-        <RecipesWrapper>
-            <RecipesList recipes={recipes.items} />
-        </RecipesWrapper>
+        <App data-testid="app">
+            <Recipes recipes={recipes.items} />
+        </App>
     );
 };
